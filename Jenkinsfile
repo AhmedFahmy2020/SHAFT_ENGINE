@@ -1,6 +1,12 @@
 pipeline {
   agent any
   stages {
+    stage('Setup Selenium Grid') {
+      steps {
+        sh 'docker-compose -f docker-compose_native.yml up --scale chrome=4 --remove-orphans -d'
+      }
+    }
+
     stage('Run Tests') {
       agent {
         docker {
