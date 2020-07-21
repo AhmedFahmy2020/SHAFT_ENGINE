@@ -2,12 +2,7 @@ pipeline {
   agent any
   stages {
     stage('Setup Selenium Grid') {
-      agent {
-        docker {
-          image 'alpine:latest'
-        }
-
-      }
+      agent any
       steps {
         sh 'docker-compose -f docker-compose_native.yml up --scale chrome=4 --remove-orphans -d'
       }
