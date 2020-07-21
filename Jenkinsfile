@@ -3,6 +3,7 @@ pipeline {
   stages {
     stage('Setup Selenium Grid') {
       steps {
+        sh 'docker-compose -f docker-compose_native.yml up --scale chrome=4 --remove-orphans -d'
         step([$class: 'DockerComposeBuilder', dockerComposeFile: 'docker-compose_native.yml', option: [$class: 'StartAllServices'], useCustomDockerComposeFile: true])
       }
     }
