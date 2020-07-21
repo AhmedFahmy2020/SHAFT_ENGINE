@@ -1,10 +1,15 @@
 pipeline {
   agent any
   stages {
+    stage('Setup docker-compose') {
+      steps {
+        sh 'curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
+      }
+    }
+    
     stage('Setup Selenium Grid') {
       steps {
         sh 'docker-compose -f docker-compose_native.yml up --scale chrome=4 --remove-orphans -d'
-        step([$class: 'DockerComposeBuilder', dockerComposeFile: 'docker-compose_native.yml', option: [$class: 'StartAllServices'], useCustomDockerComposeFile: true])
       }
     }
 
@@ -22,13 +27,7 @@ pipeline {
 
     stage('Teardown') {
       steps {
-        step([$class: 'DockerComposeBuilder', dockerComposeFile: 'docker-compose_native.yml', option: [$class: 'StopAllServices'], useCustomDockerComposeFile: true])
-      }
-    }
-
-    stage('Setup docker-compose') {
-      steps {
-        sh 'curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
+        sh 'docker-compose -f docker-compose_native.yml down --remove-orphans'
       }
     }
 
