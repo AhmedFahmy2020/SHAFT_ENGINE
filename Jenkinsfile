@@ -4,7 +4,7 @@ pipeline {
     stage('Run Tests') {
       agent {
         docker {
-          image '3.6.3-jdk-14'
+          image 'maven:3.6.3-openjdk-14'
         }
 
       }
