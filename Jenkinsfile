@@ -4,7 +4,7 @@ pipeline {
     stage('Setup Selenium Grid') {
       agent any
       steps {
-        bat(script: 'docker-compose -f docker-compose_native.yml up --scale chrome=4 --remove-orphans -d', returnStdout: true, returnStatus: true)
+        sh 'docker-compose -f docker-compose_native.yml up --scale chrome=4 --remove-orphans -d'
       }
     }
 
@@ -15,9 +15,6 @@ pipeline {
         }
 
       }
-      environment {
-        MSYS_NO_PATHCONV = '1'
-      }
       steps {
         sh 'mvn test -DexecutionAddress="localhost:4444" -DtargetOperatingSystem="Linux-64" -DmaximumPerformanceMode="true" -DtargetBrowserName="GoogleChrome" -Dtest="!%regex[.*checksum.*], !%regex[.*cucumber.*], !%regex[.*sikulix.*], !%regex[.*imageComparison.*], !%regex[.*FileActions.*], !%regex[.*TerminalActions.*], !%regex[.*localShell.*], !%regex[.*fullPageScreenshotWithHeader.*], !%regex[.*dbConnection.*], !%regex[.*Appium.*]"'
       }
@@ -25,7 +22,7 @@ pipeline {
 
     stage('Teardown') {
       steps {
-        bat(script: 'docker-compose -f docker-compose_native.yml down --remove-orphans', returnStatus: true, returnStdout: true)
+        sh 'docker-compose -f docker-compose_native.yml down --remove-orphans'
       }
     }
 
